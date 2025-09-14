@@ -36,7 +36,7 @@ public class DouyinParseService {
         // 2. 获取第一个链接的重定向地址
         String redirectUrl = getLocationHeader(douyinUrls.get(0));
 
-        System.out.println("redirectUrl: "+redirectUrl);
+        System.out.println("redirectUrl: " + redirectUrl);
         if (redirectUrl == null) {
             return new ArrayList<>();
         }

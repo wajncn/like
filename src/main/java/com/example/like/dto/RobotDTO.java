@@ -1,4 +1,4 @@
-package com.example.like;
+package com.example.like.dto;
 
 import lombok.Data;
 
