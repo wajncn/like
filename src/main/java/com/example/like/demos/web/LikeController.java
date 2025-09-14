@@ -1,19 +1,3 @@
-/*
- * Copyright 2013-2018 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.example.like.demos.web;
 
 import com.example.like.RobotDTO;
@@ -29,13 +13,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@RequestMapping("like")
 @RestController
-public class BasicController {
+public class LikeController {
 
-    private static final Logger log = LoggerFactory.getLogger(BasicController.class);
+    private static final Logger log = LoggerFactory.getLogger(LikeController.class);
     private final Map<String, Like> map = new ConcurrentHashMap<>();
 
-    @GetMapping("log")
+    @GetMapping("/log")
     public List<RobotDTO> list() {
         List<RobotDTO> list = new ArrayList<>();
         for (Map.Entry<String, Like> stringLikeEntry : map.entrySet()) {
@@ -48,7 +33,7 @@ public class BasicController {
         return list;
     }
 
-    @GetMapping("stop")
+    @GetMapping("/stop")
     public int stop(@RequestParam String key) {
         Like like = map.get(key);
         if(like == null) {

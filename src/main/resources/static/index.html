@@ -3,520 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>cURL to Unirest 转换器</title>
+    <title>抖音视频下载器</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1200px;
+            font-family: Arial, sans-serif;
+            max-width: 800px;
             margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow: hidden;
+            padding: 20px;
+            background-color: #f5f5f5;
         }
-
-        .header {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
+        .container {
+            background-color: white;
             padding: 30px;
-            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            font-weight: 300;
-        }
-
-        .header p {
-            font-size: 1.2em;
-            opacity: 0.9;
-        }
-
-        .content {
-            padding: 40px;
-        }
-
-        .form-group {
-            margin-bottom: 30px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 10px;
-            font-size: 1.1em;
-            font-weight: 600;
+        h1 {
             color: #333;
-        }
-
-        #curlInput {
-            width: 100%;
-            height: 300px;
-            padding: 20px;
-            border: 2px solid #e1e8ed;
-            border-radius: 15px;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            line-height: 1.5;
-            resize: vertical;
-            transition: all 0.3s ease;
-            background: #f8f9fa;
-        }
-
-        #curlInput:focus {
-            outline: none;
-            border-color: #4facfe;
-            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
-            background: white;
-        }
-
-        .button-group {
             text-align: center;
-            margin: 30px 0;
         }
-
-        #submitBtn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 15px 40px;
-            border: none;
-            border-radius: 50px;
-            font-size: 1.1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        #submitBtn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
-        }
-
-        #submitBtn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .result-section {
-            margin-top: 40px;
-        }
-
-        #result {
-            width: 100%;
-            min-height: 200px;
-            max-height: 500px;
-            padding: 20px;
-            border: 2px solid #e1e8ed;
-            border-radius: 15px;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            line-height: 1.5;
-            background: #f8f9fa;
-            overflow-y: auto;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-
-        .log-section {
-            margin-top: 40px;
-            background: #f8f9ff;
-            padding: 20px;
-            border-radius: 15px;
-            border: 2px solid #e1e8ed;
-        }
-
-        .log-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .form-group {
             margin-bottom: 20px;
         }
-
-        .refresh-btn {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            color: white;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 20px;
-            font-size: 0.9em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .refresh-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
-        }
-
-        .log-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .log-item {
-            background: white;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-        }
-
-        .log-item.running {
-            border-left: 4px solid #28a745;
-            background: #f8fff9;
-        }
-
-        .log-item.stopped {
-            border-left: 4px solid #dc3545;
-            background: #fff5f5;
-        }
-
-        .log-info {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            margin-right: 15px;
-        }
-
-        .log-key {
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            color: #666;
-            word-break: break-all;
-            margin-bottom: 5px;
-        }
-
-        .log-status {
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .log-status.running {
-            color: #28a745;
-        }
-
-        .log-status.stopped {
-            color: #dc3545;
-        }
-
-        .log-actions {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .log-count {
-            background: #4facfe;
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 14px;
-            min-width: 50px;
-            text-align: center;
-        }
-
-        .stop-btn {
-            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-            color: white;
-            padding: 6px 12px;
-            border: none;
-            border-radius: 15px;
-            font-size: 11px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-        }
-
-        .stop-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
-        }
-
-        .stop-btn:disabled {
-            background: #6c757d;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .empty-log {
-            text-align: center;
-            color: #999;
-            padding: 30px;
-            font-style: italic;
-        }
-
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .spinner {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #4facfe;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .example {
-            background: #e8f4fd;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-            border-left: 4px solid #4facfe;
-        }
-
-        .example h3 {
-            color: #2c5aa0;
-            margin-bottom: 10px;
-        }
-
-        .example code {
-            background: white;
-            padding: 10px;
-            border-radius: 5px;
+        label {
             display: block;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            overflow-x: auto;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            resize: vertical;
+            min-height: 100px;
+            font-size: 14px;
+        }
+        button {
+            background-color: #ff2d55;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #e60033;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        .result.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .result.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .loading {
+            text-align: center;
+            display: none;
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #ff2d55;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="header">
-        <h1>cURL to Unirest 转换器</h1>
-        <p>将您的 cURL 命令转换为 Unirest 请求并执行</p>
-    </div>
-
-    <div class="content">
+    <div class="container">
+        <h1>抖音视频下载器</h1>
         <div class="form-group">
-            <label for="curlInput">输入 cURL 命令:</label>
-            <textarea id="curlInput"></textarea>
+            <label for="douyinUrl">请输入抖音分享文本:</label>
+            <textarea id="douyinUrl" placeholder="例如: 0.00 推荐看这个👍复制打开抖音👀爱好也是截然不同的😽 # 高品质童装 # 童装新款... https://v.douyin.com/r0biyIy6OeE/ SyG:/ 11/14 u@S.lP"></textarea>
         </div>
-
-        <div class="button-group">
-            <button id="submitBtn" onclick="convertAndExecute()">
-                转换并执行请求
-            </button>
-        </div>
-
+        <button id="downloadBtn">下载视频</button>
+        
         <div class="loading" id="loading">
             <div class="spinner"></div>
-            <p>正在处理请求...</p>
+            <p>正在下载视频，请稍候...</p>
         </div>
-
-        <div class="result-section">
-            <label for="result">执行结果:</label>
-            <div id="result">结果将在这里显示...</div>
-        </div>
-
-        <div class="log-section">
-            <div class="log-header">
-                <label>运行日志:</label>
-                <button class="refresh-btn" onclick="refreshLogs()">刷新日志</button>
-            </div>
-            <ul class="log-list" id="logList">
-                <li class="empty-log">点击刷新日志查看运行状态</li>
-            </ul>
-        </div>
-
-        <div class="example">
-            <h3>示例 cURL 命令</h3>
-            <code>curl --location 'https://jsonplaceholder.typicode.com/posts' \
-                --header 'Content-Type: application/json' \
-                --data '{
-                "title": "测试标题",
-                "body": "测试内容",
-                "userId": 1
-                }'</code>
-        </div>
+        
+        <div class="result" id="result"></div>
     </div>
-</div>
 
-<script>
-    async function convertAndExecute() {
-        const curlInput = document.getElementById('curlInput');
-        const resultDiv = document.getElementById('result');
-        const submitBtn = document.getElementById('submitBtn');
-        const loading = document.getElementById('loading');
-
-        const curlCommand = curlInput.value.trim();
-
-        if (!curlCommand) {
-            resultDiv.textContent = '请输入 cURL 命令';
-            resultDiv.style.color = 'red';
-            return;
-        }
-
-        if (!curlCommand.startsWith('curl')) {
-            resultDiv.textContent = '请输入有效的 cURL 命令';
-            resultDiv.style.color = 'red';
-            return;
-        }
-
-        try {
-            submitBtn.disabled = true;
+    <script>
+        document.getElementById('downloadBtn').addEventListener('click', function() {
+            const url = document.getElementById('douyinUrl').value.trim();
+            const downloadBtn = document.getElementById('downloadBtn');
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+            
+            if (!url) {
+                showResult('请输入抖音分享文本', 'error');
+                return;
+            }
+            
+            // Disable button and show loading
+            downloadBtn.disabled = true;
             loading.style.display = 'block';
-            resultDiv.textContent = '';
-            resultDiv.style.color = '';
-
-            const response = await fetch('/like/curl', {
+            result.style.display = 'none';
+            
+            // Send request to backend using AJAX with JSON data
+            fetch('/like/download/video', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'text/plain'
+                    'Content-Type': 'application/json'
                 },
-                body: curlCommand
+                body: JSON.stringify({ url: url })
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Create a blob from the response
+                    return response.blob();
+                } else {
+                    // Handle error responses
+                    return response.text().then(text => {
+                        throw new Error(text || '下载失败');
+                    });
+                }
+            })
+            .then(blob => {
+                // Create a download link and trigger the download
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = 'douyin_video.mp4';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(downloadUrl);
+                document.body.removeChild(a);
+                
+                showResult('视频下载成功！', 'success');
+            })
+            .catch(error => {
+                showResult(`下载失败: ${error.message}`, 'error');
+            })
+            .finally(() => {
+                // Re-enable button and hide loading
+                downloadBtn.disabled = false;
+                loading.style.display = 'none';
             });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const result = await response.text();
-            resultDiv.textContent = result;
-            resultDiv.style.color = '#2d5016';
-
-        } catch (error) {
-            console.error('Error:', error);
-            resultDiv.textContent = `错误: ${error.message}`;
-            resultDiv.style.color = 'red';
-        } finally {
-            submitBtn.disabled = false;
-            loading.style.display = 'none';
+        });
+        
+        function showResult(message, type) {
+            const result = document.getElementById('result');
+            result.textContent = message;
+            result.className = 'result ' + type;
+            result.style.display = 'block';
         }
-    }
-
-    // 支持 Ctrl+Enter 快捷键提交
-    document.getElementById('curlInput').addEventListener('keydown', function(e) {
-        if (e.ctrlKey && e.key === 'Enter') {
-            convertAndExecute();
-        }
-    });
-
-    // 自动调整文本域高度
-    document.getElementById('curlInput').addEventListener('input', function() {
-        this.style.height = 'auto';
-        this.style.height = Math.max(300, this.scrollHeight) + 'px';
-    });
-
-    // 刷新日志
-    async function refreshLogs() {
-        try {
-            const response = await fetch('/like/log');
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const logs = await response.json();
-            const logList = document.getElementById('logList');
-
-            // 清空现有内容
-            logList.innerHTML = '';
-
-            if (logs.length === 0) {
-                logList.innerHTML = '<li class="empty-log">暂无运行日志</li>';
-            } else {
-                // 按执行次数排序，从高到低
-                const sortedLogs = logs.sort((a, b) => b.count - a.count);
-
-                sortedLogs.forEach((robot) => {
-                    const listItem = document.createElement('li');
-                    const statusClass = robot.stopped ? 'stopped' : 'running';
-                    const statusText = robot.stopped ? 'Stopped' : 'Running';
-
-                    listItem.className = `log-item ${statusClass}`;
-                    listItem.innerHTML = `
-                        <div class="log-info">
-                            <div class="log-key">${robot.key}</div>
-                            <div class="log-status ${statusClass}">${statusText}</div>
-                        </div>
-                        <div class="log-actions">
-                            <div class="log-count">${robot.count}</div>
-                            ${!robot.stopped ? `<button class="stop-btn" onclick="stopTask('${robot.key}')">Stop</button>` : ''}
-                        </div>
-                    `;
-                    logList.appendChild(listItem);
-                });
-            }
-        } catch (error) {
-            console.error('刷新日志失败:', error);
-            const logList = document.getElementById('logList');
-            logList.innerHTML = '<li class="empty-log" style="color: red;">刷新日志失败: ' + error.message + '</li>';
-        }
-    }
-
-    // 停止任务
-    async function stopTask(key) {
-        try {
-            const stopButton = event.target;
-            stopButton.disabled = true;
-            stopButton.textContent = 'Stopping...';
-
-            const response = await fetch(`/like/stop?key=${encodeURIComponent(key)}`, {
-                method: 'GET'
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const result = await response.json();
-            if (result === 1) {
-                // 成功停止，刷新日志
-                await refreshLogs();
-            } else {
-                alert('停止任务失败：任务不存在');
-                stopButton.disabled = false;
-                stopButton.textContent = 'Stop';
-            }
-        } catch (error) {
-            console.error('停止任务失败:', error);
-            alert('停止任务失败: ' + error.message);
-            event.target.disabled = false;
-            event.target.textContent = 'Stop';
-        }
-    }
-
-    // 页面加载时自动刷新一次日志
-    window.addEventListener('load', function() {
-        refreshLogs();
-    });
-
-    // 定期自动刷新日志（每10秒）
-    setInterval(refreshLogs, 10000);
-</script>
+    </script>
 </body>
 </html>
