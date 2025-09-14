@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
