@@ -6,5 +6,6 @@ import lombok.Data;
 public class RobotDTO {
     private String key;
     private int count;
+    private String lastLog;
     private boolean stopped;
 }

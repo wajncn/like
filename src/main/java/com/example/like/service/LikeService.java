@@ -17,6 +17,8 @@ public class LikeService implements Runnable {
     @Setter
     private Thread thread;
 
+    @Getter
+    private String lastLog;
     public void stop() {
         stopped = true;
         if (thread != null) {
@@ -29,6 +31,7 @@ public class LikeService implements Runnable {
         while (!stopped && !Thread.currentThread().isInterrupted()) {
             try {
                 final String body = curlToUnirest(curl);
+                lastLog = body;
                 log.info("{} {}", key, body);
                 if (body.contains("手速太快了")) {
                     Thread.sleep(1000 * 60 * 5);
@@ -47,6 +50,7 @@ public class LikeService implements Runnable {
                 log.info("Exception:", e);
             }
         }
+        System.out.println("done");
     }
 
     public String curlToUnirest(String curlCommand) {

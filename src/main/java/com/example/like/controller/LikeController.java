@@ -25,6 +25,7 @@ public class LikeController {
             RobotDTO robotDTO = new RobotDTO();
             robotDTO.setKey(stringLikeEntry.getKey());
             robotDTO.setCount(stringLikeEntry.getValue().getCount());
+            robotDTO.setLastLog(stringLikeEntry.getValue().getLastLog());
             robotDTO.setStopped(stringLikeEntry.getValue().isStopped());
             list.add(robotDTO);
         }
@@ -38,15 +39,14 @@ public class LikeController {
             return 0;
         }
         like.stop();
+        map.remove(key);
         return 1;
     }
 
     @PostMapping(value = "/curl", consumes = "text/plain;charset=UTF-8")
     public String hello(@RequestBody String curl) {
         final String key = DigestUtils.md5DigestAsHex(curl.trim().getBytes());
-        if (map.containsKey(key)) {
-            return "已存在";
-        }
+        stop(key);
         try {
             LikeService like = new LikeService(curl, key);
             final String r = like.curlToUnirest(curl);
