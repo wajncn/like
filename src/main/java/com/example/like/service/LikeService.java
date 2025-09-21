@@ -67,17 +67,22 @@ public class LikeService implements Runnable {
                     String urlPart = line.substring(line.indexOf("'") + 1, line.lastIndexOf("'"));
                     url = urlPart;
                     request = Unirest.post(url);
-                } else if (line.startsWith("--header")) {
-                    String headerValue = line.substring(line.indexOf("'") + 1, line.lastIndexOf("'"));
+                } else if (line.startsWith("--header") || line.startsWith("-H ")) {
+                    String headerValue = extractQuotedValue(line);
                     String[] headerParts = headerValue.split(":", 2);
                     if (headerParts.length == 2 && request != null) {
                         String headerName = headerParts[0].trim();
                         String headerVal = headerParts[1].trim();
                         request.header(headerName, headerVal);
                     }
-                } else if (line.startsWith("--data")) {
-                    String dataValue = line.substring(line.indexOf("'") + 1, line.lastIndexOf("'"));
+                } else if (line.startsWith("--data") || line.startsWith("-d ")) {
+                    String dataValue = extractQuotedValue(line);
                     body = dataValue;
+                } else if (line.startsWith("-b ")) {
+                    String cookieValue = extractQuotedValue(line);
+                    if (request != null) {
+                        request.header("Cookie", cookieValue);
+                    }
                 }
             }
 
@@ -91,5 +96,12 @@ public class LikeService implements Runnable {
         } catch (Exception e) {
             return "执行请求时出错: " + e.getMessage();
         }
+    }
+
+    private String extractQuotedValue(String line) {
+        if (line.contains("'")) {
+            return line.substring(line.indexOf("'") + 1, line.lastIndexOf("'"));
+        }
+        return "";
     }
 }
