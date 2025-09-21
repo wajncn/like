@@ -30,10 +30,6 @@ public class LikeService implements Runnable {
     public void run() {
         while (!stopped && !Thread.currentThread().isInterrupted()) {
             try {
-                if(1==1){
-                    stop();
-                    break;
-                }
                 final String body = curlToUnirest(curl);
                 lastLog = body;
                 log.info("{} {}", key, body);
