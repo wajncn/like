@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +46,8 @@ public class LikeController {
 
     @PostMapping(value = "/curl", consumes = "text/plain;charset=UTF-8")
     public String hello(@RequestBody String curl) {
-        final String key = DigestUtils.md5DigestAsHex(curl.trim().getBytes());
+        final String md5 = DigestUtils.md5DigestAsHex(curl.trim().getBytes());
+        final String key = LocalDateTime.now() + md5.substring(0, 8);
         stop(key);
         try {
             LikeService like = new LikeService(curl, key);

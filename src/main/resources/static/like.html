@@ -466,7 +466,7 @@
                         </div>
                         <div class="log-actions">
                             <div class="log-count">${robot.count}</div>
-                            ${!robot.stopped ? `<button class="stop-btn" onclick="stopTask('${robot.key}')">Stop</button>` : ''}
+                            ${true ? `<button class="stop-btn" onclick="stopTask('${robot.key}')">Stop</button>` : ''}
                         </div>
                     `;
                     logList.appendChild(listItem);
